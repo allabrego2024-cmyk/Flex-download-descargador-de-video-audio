@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>🎵 Flex Download - Descarga Música Gratis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #8b5cf6; --primary-dark: #7c3aed; --primary-light: #a78bfa;
+            --accent: #f472b6; --accent2: #06b6d4; --bg-dark: #0f0f1a;
+            --bg-card: #1a1a2e; --bg-card-hover: #222240;
+            --text-primary: #ffffff; --text-secondary: #a0a0c0; --text-muted: #6b6b8d;
+            --border: #2a2a4a; --success: #10b981; --warning: #f59e0b;
+            --gradient1: linear-gradient(135deg, #8b5cf6, #ec4899);
+            --gradient2: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
+        .bg-animation .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15; animation: floatOrb 20s ease-in-out infinite; }
+        .bg-animation .orb:nth-child(1) { width: 500px; height: 500px; background: var(--primary); top: -10%; left: -10%; }
+        .bg-animation .orb:nth-child(2) { width: 400px; height: 400px; background: var(--accent); top: 50%; right: -10%; animation-delay: -5s; }
+        .bg-animation .orb:nth-child(3) { width: 350px; height: 350px; background: var(--accent2); bottom: -10%; left: 30%; animation-delay: -10s; }
+        @keyframes floatOrb { 0%, 100% { transform: translate(0,0) scale(1); } 25% { transform: translate(100px,-50px) scale(1.1); } 50% { transform: translate(-50px,100px) scale(0.9); } 75% { transform: translate(80px,50px) scale(1.05); } }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-dark); border-radius: 10px; }
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(15,15,26,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(139,92,246,0.1); transition: all 0.3s ease; }
+        .navbar.scrolled { padding: 10px 40px; background: rgba(15,15,26,0.95); box-shadow: 0 5px 30px rgba(0,0,0,0.5); }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon { width: 45px; height: 45px; background: var(--gradient1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 15px rgba(139,92,246,0.4); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 4px 15px rgba(139,92,246,0.4); } 50% { box-shadow: 0 4px 25px rgba(139,92,246,0.6); } }
+        .logo-text { font-size: 24px; font-weight: 800; background: var(--gradient1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: rgba(139,92,246,0.15); }
+        .nav-btn { padding: 10px 24px; background: var(--gradient1); border: none; border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(139,92,246,0.3); }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(139,92,246,0.5); }
+        .mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+        .hero { position: relative; z-index: 1; padding: 160px 40px 100px; text-align: center; max-width: 900px; margin: 0 auto; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); border-radius: 50px; font-size: 13px; color: var(--primary-light); margin-bottom: 30px; animation: fadeInDown 0.8s ease; }
+        .hero-badge .dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .hero h1 { font-size: 58px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; animation: fadeInUp 0.8s ease 0.1s both; }
+        .hero h1 .gradient-text { background: var(--gradient1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero p { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; line-height: 1.7; animation: fadeInUp 0.8s ease 0.2s both; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .search-container { position: relative; z-index: 1; max-width: 700px; margin: 0 auto 20px; animation: fadeInUp 0.8s ease 0.3s both; }
+        .search-box { display: flex; align-items: center; background: var(--bg-card); border: 2px solid var(--border); border-radius: 20px; padding: 8px; transition: all 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 10px 40px rgba(0,0,0,0.3), 0 0 30px rgba(139,92,246,0.2); }
+        .search-box i.search-icon { padding: 0 15px; color: var(--text-muted); font-size: 20px; }
+        .search-box input { flex: 1; background: none; border: none; outline: none; color: var(--text-primary); font-family: 'Poppins', sans-serif; font-size: 16px; padding: 12px 0; }
+        .search-box input::placeholder { color: var(--text-muted); }
+        .search-box .format-toggle { display: flex; background: rgba(139,92,246,0.1); border-radius: 12px; padding: 4px; margin-right: 4px; }
+        .format-toggle button { padding: 8px 16px; border: none; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s ease; background: transparent; color: var(--text-secondary); }
+        .format-toggle button.active { background: var(--gradient1); color: white; box-shadow: 0 2px 10px rgba(139,92,246,0.3); }
+        .search-box .search-btn { padding: 14px 32px; background: var(--gradient1); border: none; border-radius: 14px; color: white; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .search-box .search-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(139,92,246,0.4); }
+        .search-box .search-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .stats { display: flex; justify-content: center; gap: 50px; margin-top: 50px; animation: fadeInUp 0.8s ease 0.5s both; }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 28px; font-weight: 800; background: var(--gradient1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        .section { position: relative; z-index: 1; padding: 60px 40px; max-width: 1300px; margin: 0 auto; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .section-title { font-size: 28px; font-weight: 700; }
+        .section-title i { margin-right: 10px; background: var(--gradient1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .see-all { color: var(--primary-light); text-decoration: none; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 5px; transition: all 0.3s ease; }
+        .see-all:hover { color: var(--primary); gap: 10px; }
+        .categories { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; justify-content: center; }
+        .category-pill { padding: 10px 22px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50px; color: var(--text-secondary); font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .category-pill:hover { border-color: var(--primary); color: var(--text-primary); background: rgba(139,92,246,0.1); }
+        .category-pill.active { background: var(--gradient1); border-color: transparent; color: white; box-shadow: 0 4px 15px rgba(139,92,246,0.3); }
+        .trending-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .music-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; position: relative; }
+        .music-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(139,92,246,0.15); }
+        .card-cover { position: relative; height: 200px; overflow: hidden; }
+        .card-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .music-card:hover .card-cover img { transform: scale(1.1); }
+        .card-cover .overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,15,26,0.9) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .music-card:hover .card-cover .overlay { opacity: 1; }
+        .play-btn-large { width: 60px; height: 60px; background: var(--gradient1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; transform: scale(0); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 20px rgba(139,92,246,0.5); }
+        .music-card:hover .play-btn-large { transform: scale(1); }
+        .card-format-badge { position: absolute; top: 12px; right: 12px; padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-mp3 { background: rgba(139,92,246,0.9); color: white; }
+        .badge-mp4 { background: rgba(236,72,153,0.9); color: white; }
+        .badge-both { background: linear-gradient(135deg, rgba(139,92,246,0.9), rgba(236,72,153,0.9)); color: white; }
+        .card-info { padding: 20px; }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-artist { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; }
+        .card-stats { display: flex; gap: 15px; }
+        .card-stats span { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+        .card-duration { font-size: 12px; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; }
+        .card-actions { display: flex; gap: 8px; padding: 0 20px 20px; }
+        .btn-download { flex: 1; padding: 10px; border: none; border-radius: 12px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-mp3 { background: rgba(139,92,246,0.15); color: var(--primary-light); border: 1px solid rgba(139,92,246,0.3); }
+        .btn-mp3:hover { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(139,92,246,0.3); }
+        .btn-mp4 { background: rgba(236,72,153,0.15); color: var(--accent); border: 1px solid rgba(236,72,153,0.3); }
+        .btn-mp4:hover { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(236,72,153,0.3); }
+        .results-section { display: none; }
+        .results-section.active { display: block; }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+        .results-count { font-size: 16px; color: var(--text-secondary); }
+        .results-count strong { color: var(--text-primary); }
+        .result-list { display: flex; flex-direction: column; gap: 12px; }
+        .result-item { display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; transition: all 0.3s ease; cursor: pointer; }
+        .result-item:hover { border-color: var(--primary); background: var(--bg-card-hover); transform: translateX(5px); }
+        .result-item .number { font-size: 18px; font-weight: 700; color: var(--text-muted); width: 30px; text-align: center; }
+        .result-thumb { width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex-shrink: 0; position: relative; }
+        .result-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .result-thumb .mini-play { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; color: white; font-size: 16px; }
+        .result-item:hover .mini-play { opacity: 1; }
+        .result-info { flex: 1; min-width: 0; }
+        .result-info .title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .result-info .artist { font-size: 13px; color: var(--text-secondary); }
+        .result-details { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+        .result-details .detail { text-align: center; }
+        .result-details .detail .value { font-size: 13px; font-weight: 600; }
+        .result-details .detail .label { font-size: 11px; color: var(--text-muted); }
+        .result-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .btn-dl { padding: 8px 16px; border: none; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; }
+        .btn-dl-mp3 { background: rgba(139,92,246,0.15); color: var(--primary-light); }
+        .btn-dl-mp3:hover { background: var(--primary); color: white; }
+        .btn-dl-mp4 { background: rgba(236,72,153,0.15); color: var(--accent); }
+        .btn-dl-mp4:hover { background: var(--accent); color: white; }
+        .btn-dl:disabled { opacity: 0.5; cursor: not-allowed; }
+        .player-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(26,26,46,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 12px 30px; display: none; align-items: center; gap: 20px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .player-bar.active { display: flex; transform: translateY(0); }
+        .player-info { display: flex; align-items: center; gap: 14px; min-width: 250px; }
+        .player-thumb { width: 50px; height: 50px; border-radius: 10px; overflow: hidden; }
+        .player-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .player-text .p-title { font-size: 14px; font-weight: 600; }
+        .player-text .p-artist { font-size: 12px; color: var(--text-secondary); }
+        .player-controls { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .player-buttons { display: flex; align-items: center; gap: 20px; }
+        .player-buttons button { background: none; border: none; color: var(--text-secondary); font-size: 18px; cursor: pointer; transition: all 0.3s ease; }
+        .player-buttons button:hover { color: var(--text-primary); }
+        .player-buttons .play-pause { width: 42px; height: 42px; background: var(--gradient1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; box-shadow: 0 3px 15px rgba(139,92,246,0.4); }
+        .player-buttons .play-pause:hover { transform: scale(1.1); }
+        .progress-bar { width: 100%; max-width: 500px; display: flex; align-items: center; gap: 10px; }
+        .progress-bar .time { font-size: 11px; color: var(--text-muted); min-width: 40px; }
+        .progress-track { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; position: relative; }
+        .progress-track:hover { height: 6px; }
+        .progress-fill { height: 100%; background: var(--gradient1); border-radius: 10px; width: 35%; position: relative; }
+        .progress-fill::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: white; border-radius: 50%; opacity: 0; transition: opacity 0.3s ease; }
+        .progress-track:hover .progress-fill::after { opacity: 1; }
+        .player-extra { display: flex; align-items: center; gap: 15px; min-width: 200px; justify-content: flex-end; }
+        .player-extra button { background: none; border: none; color: var(--text-secondary); font-size: 16px; cursor: pointer; transition: all 0.3s ease; }
+        .player-extra button:hover { color: var(--text-primary); }
+        .volume-control { display: flex; align-items: center; gap: 8px; }
+        .volume-slider { width: 80px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; position: relative; }
+        .volume-fill { height: 100%; width: 70%; background: var(--primary); border-radius: 10px; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .step-card { text-align: center; padding: 40px 30px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .step-card:hover { transform: translateY(-5px); border-color: rgba(139,92,246,0.3); }
+        .step-icon { width: 70px; height: 70px; background: var(--gradient1); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .step-number { position: absolute; top: 15px; right: 20px; font-size: 48px; font-weight: 900; color: rgba(255,255,255,0.03); }
+        .step-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .step-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .feature-card { padding: 25px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; text-align: center; transition: all 0.3s ease; }
+        .feature-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .feature-card i { font-size: 28px; margin-bottom: 12px; background: var(--gradient1); 
+            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .feature-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+        .feature-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 40px; max-width: 480px; width: 100%; text-align: center; animation: modalIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-icon { width: 80px; height: 80px; background: var(--gradient1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: 0 10px 30px rgba(139,92,246,0.4); }
+        .modal h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+        .modal p { color: var(--text-secondary); font-size: 14px; margin-bottom: 25px; }
+        .modal-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .modal-option { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: all 0.3s ease; }
+        .modal-option:hover { border-color: var(--primary); background: rgba(139,92,246,0.05); }
+        .modal-option .opt-left { display: flex; align-items: center; gap: 12px; }
+        .modal-option .opt-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .opt-icon.mp3 { background: rgba(139,92,246,0.2); color: var(--primary-light); }
+        .opt-icon.mp4 { background: rgba(236,72,153,0.2); color: var(--accent); }
+        .modal-option .opt-info .opt-format { font-weight: 600; font-size: 15px; }
+        .modal-option .opt-info .opt-quality { font-size: 12px; color: var(--text-muted); }
+        .modal-option .opt-size { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+        .modal-close { padding: 12px 30px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; color: var(--text-secondary); font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.3s ease; }
+        .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+        .toast { position: fixed; bottom: 100px; right: 30px; z-index: 3000; padding: 16px 24px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .toast.active { transform: translateX(0); }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: #ef4444; }
+        .toast .toast-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .toast.success .toast-icon { background: rgba(16,185,129,0.2); color: var(--success); }
+        .toast.error .toast-icon { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .toast .toast-text { font-size: 14px; font-weight: 500; }
+        .toast .toast-sub { font-size: 12px; color: var(--text-muted); }
+        .download-progress { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 2500; background: var(--bg-card); border: 1px solid var(--primary); border-radius: 16px; padding: 16px 24px; min-width: 300px; display: none; box-shadow: 0 10px 40px rgba(139,92,246,0.3); }
+        .download-progress.active { display: block; animation: fadeInUp 0.3s ease; }
+        .download-progress .dp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .download-progress .dp-title { font-size: 14px; font-weight: 600; }
+        .download-progress .dp-percent { font-size: 14px; font-weight: 700; color: var(--primary-light); }
+        .dp-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .dp-fill { height: 100%; background: var(--gradient1); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
+        .footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 50px 40px 120px; max-width: 1300px; margin: 0 auto; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+        .footer-brand p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 300px; margin-top: 15px; }
+        .footer-social { display: flex; gap: 10px; margin-top: 20px; }
+        .footer-social a { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); text-decoration: none; transition: all 0.3s ease; }
+        .footer-social a:hover { background: var(--primary); border-color: var(--primary); color: white; }
+        .footer-col h4 { font-size: 15px; font-weight: 600; margin-bottom: 18px; }
+        .footer-col a { display: block; color: var(--text-secondary); text-decoration: none; font-size: 14px; padding: 6px 0; transition: all 0.3s ease; }
+        .footer-col a:hover { color: var(--primary-light); padding-left: 5px; }
+        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+        .loading-spinner { display: none; justify-content: center; padding: 60px; }
+        .loading-spinner.active { display: flex; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-message { text-align: center; padding: 40px; color: var(--text-secondary); }
+        .error-message i { font-size: 48px; color: #ef4444; margin-bottom: 15px; }
+        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(15,15,26,0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 20px; border-bottom: 1px solid var(--border); }
+            .nav-links.open { display: flex; }
+            .mobile-toggle { display: block; }
+            .hero { padding: 130px 20px 60px; }
+            .hero h1 { font-size: 36px; }
+            .hero p { font-size: 15px; }
+            .search-box { flex-direction: column; padding: 12px; gap: 10px; }
+            .search-box i.search-icon { display: none; }
+            .search-box input { width: 100%; padding: 10px; }
+            .format-toggle { width: 100%; justify-content: center; }
+            .search-box .search-btn { width: 100%; justify-content: center; }
+            .stats { gap: 30px; }
+            .section { padding: 40px 20px; }
+            .trending-grid { grid-template-columns: 1fr; }
+            .result-item { flex-wrap: wrap; }
+            .result-details { display: none; }
+            .result-actions { width: 100%; justify-content: flex-end; margin-top: 8px; padding-left: 72px; }
+            .player-bar { padding: 10px 15px; gap: 10px; }
+            .player-info { min-width: auto; }
+            .player-extra { display: none; }
+            .progress-bar { display: none; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .modal { padding: 25px; }
+            .download-progress { min-width: 250px; bottom: 70px; }
+        }
+        @media (max-width: 480px) { .hero h1 { font-size: 28px; } .stat-number { font-size: 22px; } .categories { gap: 6px; } .category-pill { padding: 8px 14px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo">
+            <div class="logo-icon"> <img src="favicon.png" alt="png"></div>
+            <span class="logo-text">Flex Download</span>
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="#" class="active">Inicio</a>
+            <a href="#trending">Tendencias</a>
+            <a href="#how-it-works">Cómo Funciona</a>
+            <a href="#features">Características</a>
+            <button class="nav-btn" onclick="scrollToSearch()"><i class="fas fa-search"></i> Buscar</button>
+        </div>
+        <button class="mobile-toggle" id="mobileToggle"><i class="fas fa-bars"></i></button>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge"><span class="dot"></span> Más de 50 millones de canciones disponibles</div>
+        <h1>Descarga tu música<br><span class="gradient-text">favorita al instante</span></h1>
+        <p>Busca, escucha y descarga cualquier canción en formato MP3 o video en MP4. Rápido, gratis y con la mejor calidad.</p>
+        <div class="search-container" id="searchContainer">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Busca canciones, artistas o álbumes..." autocomplete="off">
+                <div class="format-toggle">
+                    <button class="active" data-format="mp3" onclick="setFormat(this)">MP3</button>
+                    <button data-format="mp4" onclick="setFormat(this)">MP4</button>
+                </div>
+                <button class="search-btn" id="searchBtn" onclick="searchMusic()"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat-item"><div class="stat-number" id="statSongs">0</div><div class="stat-label">Canciones</div></div>
+            <div class="stat-item"><div class="stat-number">320kbps</div><div class="stat-label">Calidad Máxima</div></div>
+            <div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">Gratis</div></div>
+            <div class="stat-item"><div class="stat-number">∞</div><div class="stat-label">Descargas</div></div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="categories">
+            <button class="category-pill active" onclick="filterCategory(this, 'all')"><i class="fas fa-fire"></i> Todo</button>
+            <button class="category-pill" onclick="filterCategory(this, 'pop')"><i class="fas fa-music"></i> Pop</button>
+            <button class="category-pill" onclick="filterCategory(this, 'reggaeton')"><i class="fas fa-drum"></i> Reggaetón</button>
+            <button class="category-pill" onclick="filterCategory(this, 'rock')"><i class="fas fa-guitar"></i> Rock</button>
+            <button class="category-pill" onclick="filterCategory(this, 'electronic')"><i class="fas fa-headphones"></i> Electrónica</button>
+            <button class="category-pill" onclick="filterCategory(this, 'hiphop')"><i class="fas fa-microphone"></i> Hip Hop</button>
+            <button class="category-pill" onclick="filterCategory(this, 'latin')"><i class="fas fa-star"></i> Latin</button>
+            <button class="category-pill" onclick="filterCategory(this, 'rnb')"><i class="fas fa-heart"></i> R&B</button>
+        </div>
+    </section>
+
+    <section class="section" id="trending">
+        <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-fire-flame-curved"></i> Tendencias Ahora</h2>
+            <a href="#" class="see-all">Ver todo <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="trending-grid" id="trendingGrid"></div>
+    </section>
+
+    <section class="section results-section" id="resultsSection">
+        <div class="results-header">
+            <span class="results-count">Mostrando <strong id="resultCount">0</strong> resultados para "<strong id="searchQuery"></strong>"</span>
+        </div>
+        <div class="loading-spinner" id="loadingSpinner"><div class="spinner"></div></div>
+        <div class="result-list" id="resultList"></div>
+    </section>
+
+    <section class="section" id="how-it-works">
+        <div class="section-header"><h2 class="section-title"><i class="fas fa-wand-magic-sparkles"></i> Cómo Funciona</h2></div>
+        <div class="steps-grid">
+            <div class="step-card"><span class="step-number">01</span><div class="step-icon"><i class="fas fa-search"></i></div><h3>Busca tu canción</h3><p>Escribe el nombre de la canción, artista o pega un enlace de YouTube.</p></div>
+            <div class="step-card"><span class="step-number">02</span><div class="step-icon"><i class="fas fa-sliders"></i></div><h3>Elige el formato</h3><p>Selecciona entre MP3 para solo audio o MP4 para video.</p></div>
+            <div class="step-card"><span class="step-number">03</span><div class="step-icon"><i class="fas fa-download"></i></div><h3>Descarga al instante</h3><p>Haz clic en descargar y obtén tu archivo en segundos.</p></div>
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <div class="section-header"><h2 class="section-title"><i class="fas fa-bolt"></i> ¿Por qué MusicDown?</h2></div>
+        <div class="features-grid">
+            <div class="feature-card"><i class="fas fa-gem"></i><h4>Alta Calidad</h4><p>Audio hasta 320kbps y video HD 1080p</p></div>
+            <div class="feature-card"><i class="fas fa-bolt"></i><h4>Ultra Rápido</h4><p>Descargas en segundos con servidores rápidos</p></div>
+            <div class="feature-card"><i class="fas fa-shield-halved"></i><h4>100% Seguro</h4><p>Sin virus, sin malware, sin registros</p></div>
+            <div class="feature-card"><i class="fas fa-infinity"></i><h4>Sin Límites</h4><p>Descarga todo lo que quieras, sin restricciones</p></div>
+            <div class="feature-card"><i class="fas fa-mobile-screen"></i><h4>Multiplataforma</h4><p>Funciona en PC, tablet y móvil</p></div>
+            <div class="feature-card"><i class="fas fa-face-smile"></i><h4>Totalmente Gratis</h4><p>Sin costos ocultos ni suscripciones</p></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo"><div class="logo-icon">🎵</div><span class="logo-text">MusicDown</span></a>
+                <p>La mejor plataforma para descargar música y videos de forma gratuita, rápida y segura.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-col"><h4>Navegación</h4><a href="#">Inicio</a><a href="#">Tendencias</a><a href="#">Géneros</a><a href="#">Top Semanal</a></div>
+            <div class="footer-col"><h4>Formatos</h4><a href="#">Descargar MP3</a><a href="#">Descargar MP4</a><a href="#">Calidad FLAC</a><a href="#">Video HD</a></div>
+            <div class="footer-col"><h4>Legal</h4><a href="#">Términos de Uso</a><a href="#">Privacidad</a><a href="#">DMCA</a><a href="#">Contacto</a></div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 MusicDown. Todos los derechos reservados.</p></div>
+    </footer>
+
+    <!-- Player Bar -->
+    <div class="player-bar" id="playerBar">
+        <div class="player-info">
+            <div class="player-thumb"><img src="" alt="" id="playerThumb"></div>
+            <div class="player-text"><div class="p-title" id="playerTitle">-</div><div class="p-artist" id="playerArtist">-</div></div>
+        </div>
+        <div class="player-controls">
+            <div class="player-buttons">
+                <button><i class="fas fa-shuffle"></i></button>
+                <button><i class="fas fa-backward-step"></i></button>
+                <button class="play-pause" id="playPauseBtn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+                <button><i class="fas fa-forward-step"></i></button>
+                <button><i class="fas fa-repeat"></i></button>
+            </div>
+            <div class="progress-bar">
+                <span class="time">1:23</span>
+                <div class="progress-track"><div class="progress-fill"></div></div>
+                <span class="time">3:45</span>
+            </div>
+        </div>
+        <div class="player-extra">
+            <button><i class="fas fa-heart"></i></button>
+            <div class="volume-control">
+                <button><i class="fas fa-volume-high"></i></button>
+                <div class="volume-slider"><div class="volume-fill"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Modal -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal">
+            <div class="modal-icon"><i class="fas fa-download"></i></div>
+            <h2 id="modalTitle">Descargar Canción</h2>
+            <p id="modalArtist">Selecciona el formato y calidad</p>
+            <div class="modal-options">
+                <div class="modal-option" onclick="startDownload('mp3', '320kbps')">
+                    <div class="opt-left"><div class="opt-icon mp3"><i class="fas fa-music"></i></div><div class="opt-info"><div class="opt-format">MP3 - Alta Calidad</div><div class="opt-quality">320 kbps • Estéreo</div></div></div>
+                    <span class="opt-size">~8 MB</span>
+                </div>
+                <div class="modal-option" onclick="startDownload('mp3', '192kbps')">
+                    <div class="opt-left"><div class="opt-icon mp3"><i class="fas fa-music"></i></div><div class="opt-info"><div class="opt-format">MP3 - Calidad Normal</div><div class="opt-quality">192 kbps • Estéreo</div></div></div>
+                    <span class="opt-size">~5 MB</span>
+                </div>
+                <div class="modal-option" onclick="startDownload('mp4', '1080p')">
+                    <div class="opt-left"><div class="opt-icon mp4"><i class="fas fa-video"></i></div><div class="opt-info"><div class="opt-format">MP4 - Full HD</div><div class="opt-quality">1080p • Con Audio</div></div></div>
+                    <span class="opt-size">~45 MB</span>
+                </div>
+                <div class="modal-option" onclick="startDownload('mp4', '720p')">
+                    <div class="opt-left"><div class="opt-icon mp4"><i class="fas fa-video"></i></div><div class="opt-info"><div class="opt-format">MP4 - HD</div><div class="opt-quality">720p • Con Audio</div></div></div>
+                    <span class="opt-size">~25 MB</span>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Download Progress -->
+    <div class="download-progress" id="downloadProgress">
+        <div class="dp-header">
+            <span class="dp-title" id="dpTitle">Descargando...</span>
+            <span class="dp-percent" id="dpPercent">0%</span>
+        </div>
+        <div class="dp-bar"><div class="dp-fill" id="dpFill"></div></div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast success" id="toast">
+        <div class="toast-icon"><i class="fas fa-check"></i></div>
+        <div><div class="toast-text" id="toastText">¡Descarga iniciada!</div><div class="toast-sub" id="toastSub">Tu archivo se está descargando</div></div>
+    </div>
+
+    <script>
+        // ===== CONFIGURACIÓN =====
+        const API_BASE = window.location.origin; // Conectado al mismo servidor
+        // Si el frontend está separado, cambia esto:
+        // const API_BASE = 'http://localhost:3000';
+
+        let currentFormat = 'mp3';
+        let isPlaying = false;
+        let currentSong = null;
+        let modalSongData = null;
+        let activeDownloadInterval = null;
+
+        // ===== INICIALIZACIÓN =====
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTrending();
+            setupNavbar();
+            setupSearch();
+            loadStats();
+        });
+
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API_BASE}/api/stats`);
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('statSongs').textContent = 
+                        data.stats.totalSongs > 0 ? `${(data.stats.totalSongs/1000).toFixed(0)}K+` : '50M+';
+                }
+            } catch (e) {
+                console.log('Stats no disponibles');
+            }
+        }
+
+        // ===== NAVBAR =====
+        function setupNavbar() {
+            window.addEventListener('scroll', () => {
+                document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+            });
+            document.getElementById('mobileToggle').addEventListener('click', () => {
+                document.getElementById('navLinks').classList.toggle('open');
+            });
+        }
+
+        // ===== SEARCH =====
+        function setupSearch() {
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchMusic();
+            });
+        }
+
+        function setFormat(btn) {
+            document.querySelectorAll('.format-toggle button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFormat = btn.dataset.format;
+        }
+
+        function scrollToSearch() {
+            document.getElementById('searchInput').focus();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function searchMusic() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const searchBtn = document.getElementById('searchBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const resultList = document.getElementById('resultList');
+
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+            resultsSection.classList.add('active');
+            loadingSpinner.classList.add('active');
+            resultList.innerHTML = '';
+            document.getElementById('searchQuery').textContent = query;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+
+                loadingSpinner.classList.remove('active');
+
+                if (data.success && data.results.length > 0) {
+                    document.getElementById('resultCount').textContent = data.results.length;
+                    renderResults(data.results, query);
+                } else {
+                    resultList.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-search"></i>
+                            <h3>No se encontraron resultados</h3>
+                            <p>Intenta con otro término de búsqueda</p>
+                        </div>`;
+                    document.getElementById('resultCount').textContent = '0';
+                }
+            } catch (error) {
+                loadingSpinner.classList.remove('active');
+                resultList.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error de conexión</h3>
+                        <p>Verifica que el servidor esté corriendo en el puerto 3000</p>
+                    </div>`;
+            }
+
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = '<i class="fas fa-search"></i> Buscar';
+        }
+
+        function renderResults(songs, query) {
+            const resultList = document.getElementById('resultList');
+            resultList.innerHTML = songs.map((song, index) => `
+                <div class="result-item" onclick="playSong('${song.videoId || song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}', '${song.thumbnail}')">
+                    <span class="number">${index + 1}</span>
+                    <div class="result-thumb">
+                        <img src="${song.thumbnail}" alt="${song.title}" onerror="this.src='https://via.placeholder.com/56x56/1a1a2e/8b5cf6?text=♪'">
+                        <div class="mini-play"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="result-info">
+                        <div class="title">${highlightText(song.title, query)}</div>
+                        <div class="artist">${song.artist}</div>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail"><div class="value">${song.duration}</div><div class="label">Duración</div></div>
+                        <div class="detail"><div class="value">${formatViews(song.views)}</div><div class="label">Vistas</div></div>
+                    </div>
+                    <div class="result-actions">
+                        <button class="btn-dl btn-dl-mp3" onclick="event.stopPropagation(); openDownloadModal('${song.videoId || song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}')">
+                            <i class="fas fa-music"></i> MP3
+                        </button>
+                        <button class="btn-dl btn-dl-mp4" onclick="event.stopPropagation(); openDownloadModal('${song.videoId || song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}')">
+                            <i class="fas fa-video"></i> MP4
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span style="color: var(--primary-light); font-weight: 700;">$1</span>');
+        }
+
+        function formatViews(views) {
+            if (!views) return '0';
+            if (views >= 1000000000) return `${(views / 1000000000).toFixed(1)}B`;
+            if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
+            if (views >= 1000) return `${(views / 1000).toFixed(1)}K`;
+            return views.toString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        // ===== TRENDING =====
+        async function renderTrending() {
+            const grid = document.getElementById('trendingGrid');
+            grid.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div></div>';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/trending?limit=8`);
+                const data = await res.json();
+
+                if (data.success && data.results.length > 0) {
+                    grid.innerHTML = data.results.map(song => `
+                        <div class="music-card" onclick="playSong('${song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}', '${song.thumbnail}')">
+                            <div class="card-cover">
+                                <img src="${song.thumbnail}" alt="${song.title}" onerror="this.src='https://via.placeholder.com/400x200/1a1a2e/8b5cf6?text=♪'">
+                                <div class="overlay"><div class="play-btn-large"><i class="fas fa-play"></i></div></div>
+                                <span class="card-format-badge badge-both">MP3 + MP4</span>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title">${song.title}</div>
+                                <div class="card-artist">${song.artist}</div>
+                                <div class="card-meta">
+                                    <div class="card-stats"><span><i class="fas fa-play"></i> ${formatViews(song.views)}</span></div>
+                                    <span class="card-duration">${song.duration}</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-download btn-mp3" onclick="event.stopPropagation(); openDownloadModal('${song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}')"><i class="fas fa-music"></i> MP3</button>
+                                <button class="btn-download btn-mp4" onclick="event.stopPropagation(); openDownloadModal('${song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}')"><i class="fas fa-video"></i> MP4</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; grid-column: 1/-1;">Busca tu música favorita para comenzar</p>';
+                }
+            } catch (e) {
+                grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; grid-column: 1/-1;">Conecta el backend para ver tendencias</p>';
+            }
+        }
+
+        // ===== CATEGORIES =====
+        async function filterCategory(btn, category) {
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const grid = document.getElementById('trendingGrid');
+            grid.innerHTML = '<div class="loading-spinner active"><div class="spinner"></div></div>';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/trending?category=${category}&limit=20`);
+                const data = await res.json();
+
+                if (data.success && data.results.length > 0) {
+                    grid.innerHTML = data.results.map(song => `
+                        <div class="music-card" onclick="playSong('${song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}', '${song.thumbnail}')">
+                            <div class="card-cover">
+                                <img src="${song.thumbnail}" alt="${song.title}" onerror="this.src='https://via.placeholder.com/400x200/1a1a2e/8b5cf6?text=♪'">
+                                <div class="overlay"><div class="play-btn-large"><i class="fas fa-play"></i></div></div>
+                                <span class="card-format-badge badge-both">MP3 + MP4</span>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title">${song.title}</div>
+                                <div class="card-artist">${song.artist}</div>
+                                <div class="card-meta">
+                                    <div class="card-stats"><span><i class="fas fa-play"></i> ${formatViews(song.views)}</span></div>
+                                    <span class="card-duration">${song.duration}</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-download btn-mp3" onclick="event.stopPropagation(); openDownloadModal('${song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}')"><i class="fas fa-music"></i> MP3</button>
+                                <button class="btn-download btn-mp4" onclick="event.stopPropagation(); openDownloadModal('${song.yt_video_id}', '${escapeHtml(song.title)}', '${escapeHtml(song.artist)}')"><i class="fas fa-video"></i> MP4</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; grid-column: 1/-1;">No hay canciones en esta categoría aún</p>';
+                }
+            } catch (e) {
+                grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; grid-column: 1/-1;">Error al cargar categoría</p>';
+            }
+        }
+
+        // ===== PLAYER =====
+        function playSong(videoId, title, artist, thumbnail) {
+            currentSong = { videoId, title, artist, thumbnail };
+            isPlaying = true;
+
+            document.getElementById('playerThumb').src = thumbnail || '';
+            document.getElementById('playerTitle').textContent = title;
+            document.getElementById('playerArtist').textContent = artist;
+            document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
+            document.getElementById('playerBar').classList.add('active');
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            document.getElementById('playPauseBtn').innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+        }
+
+        // ===== DOWNLOAD MODAL =====
+        function openDownloadModal(videoId, title, artist) {
+            modalSongData = { videoId, title, artist };
+            document.getElementById('modalTitle').textContent = `Descargar: ${title}`;
+            document.getElementById('modalArtist').textContent = artist;
+            document.getElementById('downloadModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('downloadModal').classList.remove('active');
+        }
+
+        document.getElementById('downloadModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('downloadModal')) closeModal();
+        });
+
+        // ===== DOWNLOAD PROCESS =====
+        async function startDownload(format, quality) {
+            if (!modalSongData) return;
+
+            closeModal();
+
+            // Mostrar barra de progreso
+            const dp = document.getElementById('downloadProgress');
+            const dpTitle = document.getElementById('dpTitle');
+            const dpPercent = document.getElementById('dpPercent');
+            const dpFill = document.getElementById('dpFill');
+
+            dpTitle.textContent = `Descargando ${modalSongData.title}...`;
+            dpPercent.textContent = '0%';
+            dpFill.style.width = '0%';
+            dp.classList.add('active');
+
+            try {
+                // Iniciar descarga
+                const res = await fetch(`${API_BASE}/api/download`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        videoId: modalSongData.videoId,
+                        title: modalSongData.title,
+                        format: format,
+                        quality: quality
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!data.success) {
+                    dp.classList.remove('active');
+                    showToast('Error', data.message || 'Error al iniciar descarga', 'error');
+                    return;
+                }
+
+                // Poll para verificar progreso
+                const downloadId = data.downloadId;
+
+                if (data.status === 'ready') {
+                    // Archivo ya existe
+                    dpPercent.textContent = '100%';
+                    dpFill.style.width = '100%';
+
+                    setTimeout(() => {
+                        dp.classList.remove('active');
+                        window.open(`${API_BASE}${data.downloadUrl}`, '_blank');
+                        showToast('✅ ¡Descarga lista!', `${modalSongData.title} - ${format.toUpperCase()}`);
+                    }, 500);
+                    return;
+                }
+
+                // Esperar a que termine la descarga
+                activeDownloadInterval = setInterval(async () => {
+                    try {
+                        const statusRes = await fetch(`${API_BASE}/api/download/status/${downloadId}`);
+                        const statusData = await statusRes.json();
+
+                        if (statusData.status === 'completed') {
+                            clearInterval(activeDownloadInterval);
+                            dpPercent.textContent = '100%';
+                            dpFill.style.width = '100%';
+
+                            setTimeout(() => {
+                                dp.classList.remove('active');
+                                window.open(`${API_BASE}${statusData.downloadUrl}`, '_blank');
+                                showToast('✅ ¡Descarga completada!', `${modalSongData.title} - ${format.toUpperCase()}`);
+                            }, 1000);
+                        } else if (statusData.status === 'error') {
+                            clearInterval(activeDownloadInterval);
+                            dp.classList.remove('active');
+                            showToast('Error', statusData.error || 'Error en la descarga', 'error');
+                        } else {
+                            const percent = statusData.percent || 0;
+                            dpPercent.textContent = `${percent}%`;
+                            dpFill.style.width = `${percent}%`;
+                            dpTitle.textContent = `Descargando ${modalSongData.title}... ${percent}%`;
+                        }
+                    } catch (e) {
+                        console.error('Error checking status:', e);
+                    }
+                }, 2000);
+
+            } catch (error) {
+                dp.classList.remove('active');
+                showToast('Error de conexión', 'Verifica que el servidor esté corriendo', 'error');
+            }
+        }
+
+        // ===== TOAST =====
+        function showToast(text, sub, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = `toast ${type}`;
+            document.getElementById('toastText').textContent = text;
+            document.getElementById('toastSub').textContent = sub;
+            toast.classList.add('active');
+
+            setTimeout(() => toast.classList.remove('active'), 5000);
+        }
+    </script>
+</body>
+</html>

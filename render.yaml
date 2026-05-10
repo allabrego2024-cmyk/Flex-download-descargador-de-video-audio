@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: musicdown
+    env: docker
+    plan: free
+    region: oregon
+    buildCommand: docker build -t musicdown .
+    startCommand: docker run -p 3000:3000 musicdown
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DOWNLOAD_DIR
+        value: ./downloads
+      - key: MAX_DOWNLOADS_PER_HOUR
+        value: 20
